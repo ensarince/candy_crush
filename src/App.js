@@ -84,6 +84,13 @@ const App = () => {
   }
   const moveIntoSquareBelow = () =>{
     for (let i = 0; i < 64 - width; i++) {
+      //when top rows emptied again, check them and assign random color to them again
+      const firstRow = [0,1,2,3,4,5,6,7]
+      const isFirstRow = firstRow.includes(i)
+      if (isFirstRow && currentColorArrangement[i] === '') {
+        let randomNumber = Math.floor(Math.random() * candyColors.length);
+        currentColorArrangement[i] = candyColors[randomNumber];
+      }
       //bi karenin aşağısı boş ise
       if (currentColorArrangement[i + width] == '') {
         //o kareye o rengi at
@@ -91,8 +98,19 @@ const App = () => {
         //ve üstteki tekrar boş olur
         currentColorArrangement[i] = ''
       }
-      
     }
+  }
+
+  const dragStart = () => {
+    console.log("drag srart")
+  }
+
+  const dragDrop = () => {
+    console.log("drag drop")
+  }
+
+  const dragEnd = () => {
+    console.log("drag end")
   }
 
   //create board once
@@ -109,12 +127,10 @@ const App = () => {
       checkForRowOfFour();
       moveIntoSquareBelow();
       setcurrentColorArrangement([...currentColorArrangement])
-    }, 100)
+    }, 1000)
     return(() => clearInterval(timer))
   }, [checkForColumnOfThree, checkForRowOfThree, checkForColumnOfFour, checkForRowOfFour, moveIntoSquareBelow, currentColorArrangement])
   
-
-
 
   return(
     <div className="app">
@@ -122,6 +138,14 @@ const App = () => {
           {currentColorArrangement.map((candyColors, index) => (
             <img key={index} 
             style={{backgroundColor : candyColors}}
+            data-id={index}
+            draggable={true}
+            onDragStart = {dragStart}
+            onDragOver={(e) => e.preventDefault()}
+            onDrag = {(e) => e.preventDefault()}
+            onDragLeave = {(e) => e.preventDefault()}
+            onDrop = {dragDrop}
+            onDragEnd = {dragEnd}
             />
           ))}
       </div>  
